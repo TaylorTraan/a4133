@@ -8,6 +8,8 @@
 
 <ion-content [fullscreen]="true">
   <div id="container">
+    
+    <!-- Sleep Tracker Button: Start and Stop Overnight Sleep -->
     <ion-card>
       <ion-card-header>
         <ion-card-title>Overnight Sleep</ion-card-title>
@@ -30,6 +32,27 @@
         </ng-template>
       </ion-card-content>
     </ion-card>
-
+    
+    <!-- Sleep Entries List-->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Overnight Sleep Entries</ion-card-title>
+      </ion-card-header>
+    
+      <ion-card-content>
+        <ion-list *ngIf="allOvernightData.length; else noOvernightData">
+          <ion-item *ngFor="let entry of allOvernightData">
+            <ion-label>
+              <h2>{{ entry.dateString() }}</h2>
+              <p>{{ entry.summaryString() }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        
+        <ng-template #noOvernightData>
+          <p> No overnight sleep logged yet. Start tracking your sleep to see your history here!</p>
+        </ng-template>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>

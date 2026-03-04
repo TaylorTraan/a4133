@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
-	IonCardSubtitle, IonCardContent } from '@ionic/angular/standalone';
+	IonCardSubtitle, IonCardContent, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
 import { SleepService } from '../services/sleep.service';
 import { SleepData } from '../data/sleep-data';
 import { OvernightSleepData } from '../data/overnight-sleep-data';
 import { StanfordSleepinessData } from '../data/stanford-sleepiness-data';
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe, NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +14,8 @@ import { DatePipe, NgIf } from '@angular/common';
   styleUrls: ['home.page.scss'],
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
-	IonCardSubtitle, IonCardContent, DatePipe, NgIf],
+	IonCardSubtitle, IonCardContent, DatePipe, NgIf, 
+	IonList, IonItem, IonLabel, NgFor],
 })
 export class HomePage {
   isTrackingOvernight: boolean = false;
@@ -31,6 +32,10 @@ export class HomePage {
 	/* Ionic doesn't allow bindings to static variables, so this getter can be used instead. */
 	get allSleepData() {
 		return SleepService.AllSleepData;
+	}
+
+	get allOvernightData() {
+		return SleepService.AllOvernightData;
 	}
 
 	startOvernightSleep() {
