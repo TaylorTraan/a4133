@@ -1,1 +1,5 @@
 .DS_Store
+
+# Lock files
+package-lock.json
+sleeptracker/package-lock.json
