@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
-	IonCardSubtitle, IonCardContent, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
+	IonCardSubtitle, IonCardContent, IonList, IonItem, IonLabel,
+  IonSegment, IonSegmentButton } from '@ionic/angular/standalone';
 import { SleepService } from '../services/sleep.service';
 import { SleepData } from '../data/sleep-data';
 import { OvernightSleepData } from '../data/overnight-sleep-data';
@@ -15,11 +16,14 @@ import { DatePipe, NgIf, NgFor } from '@angular/common';
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
 	IonCardSubtitle, IonCardContent, DatePipe, NgIf, 
-	IonList, IonItem, IonLabel, NgFor],
+	IonList, IonItem, IonLabel, NgFor, IonSegment, IonSegmentButton],
 })
 export class HomePage {
+  @ViewChild('allSleepScroll') allSleepScroll!: ElementRef<HTMLDivElement>;
   isTrackingOvernight: boolean = false;
   overnightStart: Date | null = null;
+  isLoggingSleepiness: boolean = false;
+  filterType: 'all' | 'overnight' | 'sleepiness' = 'all';
 
   constructor(public sleepService:SleepService) {
 
@@ -34,8 +38,14 @@ export class HomePage {
 		return SleepService.AllSleepData;
 	}
 
-	get allOvernightData() {
-		return SleepService.AllOvernightData;
+	get filteredSleepData() {
+		if (this.filterType === 'overnight') {
+			return SleepService.AllOvernightData;
+		}
+		if (this.filterType === 'sleepiness') {
+			return SleepService.AllSleepinessData;
+		}
+		return SleepService.AllSleepData;
 	}
 
 	startOvernightSleep() {
@@ -62,5 +72,43 @@ export class HomePage {
 
 		this.isTrackingOvernight = false;
 		this.overnightStart = null;
+		
+		setTimeout(() => {
+			this.scrollToBottom(this.allSleepScroll);
+		}, 0);
+	}
+
+	beginSleepinessLogging() {
+		this.isLoggingSleepiness = true;
+	}
+
+	logSleepiness(value: number) {
+		if (!value || value < 1 || value > 7) {
+			console.error('Invalid sleepiness value');
+			return;
+		}
+
+		const now = new Date();
+		const entry = new StanfordSleepinessData(value, now);
+		this.sleepService.logSleepinessData(entry);
+		this.isLoggingSleepiness = false;
+
+    setTimeout(() => {
+			this.scrollToBottom(this.allSleepScroll);
+    }, 0);
+	}
+
+	onFilterChange(event: CustomEvent) {
+		const value = event.detail.value as 'all' | 'overnight' | 'sleepiness';
+		if (value) {
+			this.filterType = value;
+		}
+	}
+
+	private scrollToBottom(container?: ElementRef<HTMLDivElement>) {
+		const el = container?.nativeElement;
+		if (el) {
+			el.scrollTop = el.scrollHeight;
+		}
 	}
 }

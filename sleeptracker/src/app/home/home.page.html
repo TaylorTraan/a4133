@@ -32,25 +32,64 @@
         </ng-template>
       </ion-card-content>
     </ion-card>
-    
-    <!-- Sleep Entries List-->
+
+    <!-- Log Sleepiness During the Day -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Overnight Sleep Entries</ion-card-title>
+        <ion-card-title>Sleepiness During the Day</ion-card-title>
+        <ion-card-subtitle>Log how sleepy you feel right now.</ion-card-subtitle>
       </ion-card-header>
-    
+
       <ion-card-content>
-        <ion-list *ngIf="allOvernightData.length; else noOvernightData">
-          <ion-item *ngFor="let entry of allOvernightData">
-            <ion-label>
-              <h2>{{ entry.dateString() }}</h2>
-              <p>{{ entry.summaryString() }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-        
-        <ng-template #noOvernightData>
-          <p> No overnight sleep logged yet. Start tracking your sleep to see your history here!</p>
+        <ng-container *ngIf="!isLoggingSleepiness; else rateSleepinessBlock">
+          <ion-button expand="block" (click)="beginSleepinessLogging()">
+            Log Sleepiness Now
+          </ion-button>
+        </ng-container>
+
+        <ng-template #rateSleepinessBlock>
+          <p>How sleepy are you right now? (1–7)</p>
+          <div class="sleepiness-buttons">
+            <ion-button *ngFor="let value of [1,2,3,4,5,6,7]" (click)="logSleepiness(value)">
+              {{ value }}
+            </ion-button>
+          </div>
+        </ng-template>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Combined Sleep Data with Filter -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>All Sleep Data</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-segment [value]="filterType" (ionChange)="onFilterChange($event)">
+          <ion-segment-button value="all">
+            <ion-label>All</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="overnight">
+            <ion-label>Overnight</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="sleepiness">
+            <ion-label>Sleepiness</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <div #allSleepScroll class="entries-scroll-container">
+          <ion-list *ngIf="filteredSleepData.length; else noFilteredData">
+            <ion-item *ngFor="let entry of filteredSleepData">
+              <ion-label>
+                <h2>{{ entry.dateString() }}</h2>
+                <p>{{ entry.summaryString() }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <ng-template #noFilteredData>
+          <p>No data to show yet for this filter.</p>
         </ng-template>
       </ion-card-content>
     </ion-card>
