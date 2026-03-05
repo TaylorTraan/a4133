@@ -19,8 +19,6 @@ import { DatePipe, NgIf, NgFor } from '@angular/common';
 	IonList, IonItem, IonLabel, NgFor, IonSegment, IonSegmentButton],
 })
 export class HomePage {
-  @ViewChild('overnightScroll') overnightScroll!: ElementRef<HTMLDivElement>;
-  @ViewChild('sleepinessScroll') sleepinessScroll!: ElementRef<HTMLDivElement>;
   @ViewChild('allSleepScroll') allSleepScroll!: ElementRef<HTMLDivElement>;
   isTrackingOvernight: boolean = false;
   overnightStart: Date | null = null;
@@ -38,14 +36,6 @@ export class HomePage {
 	/* Ionic doesn't allow bindings to static variables, so this getter can be used instead. */
 	get allSleepData() {
 		return SleepService.AllSleepData;
-	}
-
-	get allOvernightData() {
-		return SleepService.AllOvernightData;
-	}
-
-	get allSleepinessData() {
-		return SleepService.AllSleepinessData;
 	}
 
 	get filteredSleepData() {
@@ -84,9 +74,8 @@ export class HomePage {
 		this.overnightStart = null;
 		
 		setTimeout(() => {
-      this.scrollToBottom(this.overnightScroll);
-      this.scrollToBottom(this.allSleepScroll);
-    }, 0);
+			this.scrollToBottom(this.allSleepScroll);
+		}, 0);
 	}
 
 	beginSleepinessLogging() {
@@ -105,8 +94,7 @@ export class HomePage {
 		this.isLoggingSleepiness = false;
 
     setTimeout(() => {
-      this.scrollToBottom(this.sleepinessScroll);
-      this.scrollToBottom(this.allSleepScroll);
+			this.scrollToBottom(this.allSleepScroll);
     }, 0);
 	}
 

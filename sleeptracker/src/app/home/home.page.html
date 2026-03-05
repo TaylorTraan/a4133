@@ -57,54 +57,6 @@
         </ng-template>
       </ion-card-content>
     </ion-card>
-    
-    <!-- Sleep Entries List-->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Overnight Sleep Entries</ion-card-title>
-      </ion-card-header>
-    
-      <ion-card-content>
-        <div #overnightScroll class="entries-scroll-container">
-          <ion-list *ngIf="allOvernightData.length; else noOvernightData">
-            <ion-item *ngFor="let entry of allOvernightData">
-              <ion-label>
-                <h2>{{ entry.dateString() }}</h2>
-                <p>{{ entry.summaryString() }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </div>
-        
-        <ng-template #noOvernightData>
-          <p> No overnight sleep logged yet. Start tracking your sleep to see your history here!</p>
-        </ng-template>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Sleepiness Entries List -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Sleepiness Entries</ion-card-title>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div #sleepinessScroll class="entries-scroll-container">
-          <ion-list *ngIf="allSleepinessData.length; else noSleepinessData">
-            <ion-item *ngFor="let entry of allSleepinessData">
-              <ion-label>
-                <h2>{{ entry.dateString() }}</h2>
-                <p>{{ entry.summaryString() }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </div>
-
-        <ng-template #noSleepinessData>
-          <p>No sleepiness logged yet. Tap &quot;Log Sleepiness Now&quot; to add an entry.</p>
-        </ng-template>
-      </ion-card-content>
-    </ion-card>
 
     <!-- Combined Sleep Data with Filter -->
     <ion-card>
