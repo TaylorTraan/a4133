@@ -25,3 +25,9 @@
 #container a {
   text-decoration: none;
 }
+
+.entries-scroll-container {
+  max-height: 280px; 
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}

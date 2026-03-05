@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
 	IonCardSubtitle, IonCardContent, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
@@ -18,6 +18,7 @@ import { DatePipe, NgIf, NgFor } from '@angular/common';
 	IonList, IonItem, IonLabel, NgFor],
 })
 export class HomePage {
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
   isTrackingOvernight: boolean = false;
   overnightStart: Date | null = null;
 
@@ -62,5 +63,14 @@ export class HomePage {
 
 		this.isTrackingOvernight = false;
 		this.overnightStart = null;
+		
+		setTimeout(() => this.scrollToBottom(), 0);
+	}
+
+	private scrollToBottom() {
+		const el = this.scrollContainer?.nativeElement;
+		if (el) {
+			el.scrollTop = el.scrollHeight;
+		}
 	}
 }

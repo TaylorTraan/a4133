@@ -40,14 +40,16 @@
       </ion-card-header>
     
       <ion-card-content>
-        <ion-list *ngIf="allOvernightData.length; else noOvernightData">
-          <ion-item *ngFor="let entry of allOvernightData">
-            <ion-label>
-              <h2>{{ entry.dateString() }}</h2>
-              <p>{{ entry.summaryString() }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
+        <div #scrollContainer class="entries-scroll-container">
+          <ion-list *ngIf="allOvernightData.length; else noOvernightData">
+            <ion-item *ngFor="let entry of allOvernightData">
+              <ion-label>
+                <h2>{{ entry.dateString() }}</h2>
+                <p>{{ entry.summaryString() }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
         
         <ng-template #noOvernightData>
           <p> No overnight sleep logged yet. Start tracking your sleep to see your history here!</p>
