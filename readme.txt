@@ -9,7 +9,7 @@
 - 2/2 Either using a native device resource or backing up logged data
 - 2/2 Following good principles of mobile design
 - 2/2 Creating a compelling app
-- */1 A readme and demo video which explains how these features were implemented and their design rationale
+- 1/1 A readme and demo video which explains how these features were implemented and their design rationale
 
 2. How long, in hours, did it take you to complete this assignment?
 5 hours
