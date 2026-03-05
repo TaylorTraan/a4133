@@ -5,6 +5,13 @@
   margin: 0 auto 32px;
 }
 
+.page-intro {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 0 0 20px;
+  line-height: 1.4;
+}
+
 #container strong {
   font-size: 20px;
   line-height: 26px;
@@ -29,6 +36,26 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.empty-state {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  margin: 0;
+}
+
+.elapsed {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+ion-card-title ion-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
 .sleepiness-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -38,4 +65,5 @@
 
 .sleepiness-buttons ion-button {
   flex: 0 0 20%;
+  min-height: 44px;
 }

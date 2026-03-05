@@ -11,12 +11,17 @@ export class SleepService {
 	public static AllSleepData:SleepData[] = [];
 	public static AllOvernightData:OvernightSleepData[] = [];
 	public static AllSleepinessData:StanfordSleepinessData[] = [];
+  private static STORAGE_KEY_OVERNIGHT = 'sleeptracker_overnight';
+  private static STORAGE_KEY_SLEEPINESS = 'sleeptracker_sleepiness';
 
 	constructor() {
-		if(SleepService.LoadDefaultData) {
+		this.loadFromStorage();
+
+		if (SleepService.AllSleepData.length === 0 && SleepService.LoadDefaultData) {
 			this.addDefaultData();
-		SleepService.LoadDefaultData = false;
-	}
+			SleepService.LoadDefaultData = false;
+			this.saveToStorage();
+		}
 	}
 
 	private addDefaultData() {
@@ -41,10 +46,71 @@ export class SleepService {
 	public logOvernightData(sleepData:OvernightSleepData) {
 		SleepService.AllSleepData.push(sleepData);
 		SleepService.AllOvernightData.push(sleepData);
+		this.saveToStorage();
 	}
 
 	public logSleepinessData(sleepData:StanfordSleepinessData) {
 		SleepService.AllSleepData.push(sleepData);
 		SleepService.AllSleepinessData.push(sleepData);
+		this.saveToStorage();
+	}
+
+	private saveToStorage() {
+		if (typeof localStorage === 'undefined') {
+			return;
+		}
+
+		try {
+			const overnightPlain = SleepService.AllOvernightData.map(d => ({
+				sleepStart: d.getSleepStart().toISOString(),
+				sleepEnd: d.getSleepEnd().toISOString(),
+			}));
+
+			const sleepinessPlain = SleepService.AllSleepinessData.map(d => ({
+				loggedValue: d.getLoggedValue(),
+				loggedAt: d.loggedAt.toISOString(),
+			}));
+
+			localStorage.setItem(SleepService.STORAGE_KEY_OVERNIGHT, JSON.stringify(overnightPlain));
+			localStorage.setItem(SleepService.STORAGE_KEY_SLEEPINESS, JSON.stringify(sleepinessPlain));
+		} catch (e) {
+			console.error('Failed to save sleep data to storage', e);
+		}
+	}
+
+	private loadFromStorage() {
+		if (typeof localStorage === 'undefined') {
+			return;
+		}
+
+		try {
+			const overnightJson = localStorage.getItem(SleepService.STORAGE_KEY_OVERNIGHT);
+			const sleepinessJson = localStorage.getItem(SleepService.STORAGE_KEY_SLEEPINESS);
+
+			SleepService.AllOvernightData = [];
+			SleepService.AllSleepinessData = [];
+			SleepService.AllSleepData = [];
+
+			if (overnightJson) {
+				const overnightRaw = JSON.parse(overnightJson) as { sleepStart:string; sleepEnd:string; }[];
+				SleepService.AllOvernightData = overnightRaw.map(o =>
+					new OvernightSleepData(new Date(o.sleepStart), new Date(o.sleepEnd))
+				);
+			}
+
+			if (sleepinessJson) {
+				const sleepinessRaw = JSON.parse(sleepinessJson) as { loggedValue:number; loggedAt:string; }[];
+				SleepService.AllSleepinessData = sleepinessRaw.map(s =>
+					new StanfordSleepinessData(s.loggedValue, new Date(s.loggedAt))
+				);
+			}
+
+			SleepService.AllSleepData = [
+				...SleepService.AllOvernightData,
+				...SleepService.AllSleepinessData
+			];
+		} catch (e) {
+			console.error('Failed to load sleep data from storage', e);
+		}
 	}
 }

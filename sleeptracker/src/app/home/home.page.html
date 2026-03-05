@@ -1,19 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      SLEEP TRACKER TAYLOR TRAN AND AP
-    </ion-title>
+    <ion-title>Sleep Tracker</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div id="container">
-    
+    <p class="page-intro">Track overnight sleep and log how sleepy you feel during the day.</p>
+
     <!-- Sleep Tracker Button: Start and Stop Overnight Sleep -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Overnight Sleep</ion-card-title>
-        <ion-card-subtitle>Tap when you're ready to sleep, and tap again when you wake up.</ion-card-subtitle>
+        <ion-card-title><ion-icon name="moon-outline"></ion-icon> Overnight Sleep</ion-card-title>
+        <ion-card-subtitle>Tap when you're ready to sleep, then tap again when you wake up.</ion-card-subtitle>
       </ion-card-header>
     
       <ion-card-content>
@@ -24,8 +23,9 @@
         </div>
         <ng-template #trackingBlock>
           <p>
-            Tracking since <strong> {{ overnightStart | date: 'shortTime' }}</strong>
+            Tracking since <strong>{{ overnightStart | date: 'shortTime' }}</strong>
           </p>
+          <p class="elapsed" *ngIf="trackingElapsedDisplay">Elapsed: <strong>{{ trackingElapsedDisplay }}</strong></p>
           <ion-button expand="block" color="danger" size="large" (click)="stopOvernightSleep()">
             I'm Awake!
           </ion-button>
@@ -36,8 +36,8 @@
     <!-- Log Sleepiness During the Day -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Sleepiness During the Day</ion-card-title>
-        <ion-card-subtitle>Log how sleepy you feel right now.</ion-card-subtitle>
+        <ion-card-title><ion-icon name="sunny-outline"></ion-icon> Sleepiness During the Day</ion-card-title>
+        <ion-card-subtitle>Rate how sleepy you feel right now (1 = wide awake, 7 = very sleepy).</ion-card-subtitle>
       </ion-card-header>
 
       <ion-card-content>
@@ -49,8 +49,8 @@
 
         <ng-template #rateSleepinessBlock>
           <p>How sleepy are you right now? (1–7)</p>
-          <div class="sleepiness-buttons">
-            <ion-button *ngFor="let value of [1,2,3,4,5,6,7]" (click)="logSleepiness(value)">
+          <div class="sleepiness-buttons" role="group" aria-label="Sleepiness scale 1 to 7">
+            <ion-button *ngFor="let value of [1,2,3,4,5,6,7]" (click)="logSleepiness(value)" [attr.aria-label]="'Rate sleepiness ' + value">
               {{ value }}
             </ion-button>
           </div>
@@ -61,19 +61,19 @@
     <!-- Combined Sleep Data with Filter -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>All Sleep Data</ion-card-title>
+        <ion-card-title><ion-icon name="list-outline"></ion-icon> All Sleep Data</ion-card-title>
       </ion-card-header>
 
       <ion-card-content>
         <ion-segment [value]="filterType" (ionChange)="onFilterChange($event)">
           <ion-segment-button value="all">
-            <ion-label>All</ion-label>
+            <ion-label>All ({{ allSleepData.length }})</ion-label>
           </ion-segment-button>
           <ion-segment-button value="overnight">
-            <ion-label>Overnight</ion-label>
+            <ion-label>Overnight ({{ overnightCount }})</ion-label>
           </ion-segment-button>
           <ion-segment-button value="sleepiness">
-            <ion-label>Sleepiness</ion-label>
+            <ion-label>Sleepiness ({{ sleepinessCount }})</ion-label>
           </ion-segment-button>
         </ion-segment>
 
@@ -89,7 +89,8 @@
         </div>
 
         <ng-template #noFilteredData>
-          <p>No data to show yet for this filter.</p>
+          <p class="empty-state">No entries yet for this filter.</p>
+          <p class="empty-hint">Log your first overnight sleep or sleepiness above.</p>
         </ng-template>
       </ion-card-content>
     </ion-card>
