@@ -3,10 +3,10 @@
 1. How many assignment points do you believe you completed (replace the *'s with your numbers)?
 
 */10
-- */1 The ability to log overnight sleep
-- */1 The ability to log sleepiness during the day
-- */1 The ability to view these two categories of logged data
-- */2 Either using a native device resource or backing up logged data
+- 1/1 The ability to log overnight sleep
+- 1/1 The ability to log sleepiness during the day
+- 1/1 The ability to view these two categories of logged data
+- 2/2 Either using a native device resource or backing up logged data
 - */2 Following good principles of mobile design
 - */2 Creating a compelling app
 - */1 A readme and demo video which explains how these features were implemented and their design rationale
