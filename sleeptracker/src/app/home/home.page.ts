@@ -1,8 +1,8 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
 	IonCardSubtitle, IonCardContent, IonList, IonItem, IonLabel,
-  IonSegment, IonSegmentButton } from '@ionic/angular/standalone';
+  IonSegment, IonSegmentButton, IonIcon, ToastController, AlertController } from '@ionic/angular/standalone';
 import { SleepService } from '../services/sleep.service';
 import { SleepData } from '../data/sleep-data';
 import { OvernightSleepData } from '../data/overnight-sleep-data';
@@ -15,22 +15,30 @@ import { DatePipe, NgIf, NgFor } from '@angular/common';
   styleUrls: ['home.page.scss'],
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, 
 	IonCard, IonButton, IonCardHeader, IonCardTitle, 
-	IonCardSubtitle, IonCardContent, DatePipe, NgIf, 
+	IonCardSubtitle, IonCardContent, IonIcon, DatePipe, NgIf, 
 	IonList, IonItem, IonLabel, NgFor, IonSegment, IonSegmentButton],
 })
-export class HomePage {
+export class HomePage implements OnDestroy {
   @ViewChild('allSleepScroll') allSleepScroll!: ElementRef<HTMLDivElement>;
   isTrackingOvernight: boolean = false;
   overnightStart: Date | null = null;
+  trackingElapsedDisplay: string = '';
+  private elapsedInterval: ReturnType<typeof setInterval> | null = null;
   isLoggingSleepiness: boolean = false;
   filterType: 'all' | 'overnight' | 'sleepiness' = 'all';
 
-  constructor(public sleepService:SleepService) {
-
-	}
+  constructor(
+    public sleepService: SleepService,
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
+  ) {}
 
 	ngOnInit() {
 		console.log(this.allSleepData);
+	}
+
+	ngOnDestroy() {
+		this.clearElapsedInterval();
 	}
 
 	/* Ionic doesn't allow bindings to static variables, so this getter can be used instead. */
@@ -48,34 +56,75 @@ export class HomePage {
 		return SleepService.AllSleepData;
 	}
 
+	get overnightCount() {
+		return SleepService.AllOvernightData.length;
+	}
+
+	get sleepinessCount() {
+		return SleepService.AllSleepinessData.length;
+	}
+
 	startOvernightSleep() {
 		if (this.isTrackingOvernight) {
 			return;
 		}
 		this.isTrackingOvernight = true;
 		this.overnightStart = new Date();
+		this.updateElapsedDisplay();
+		this.elapsedInterval = setInterval(() => this.updateElapsedDisplay(), 1000);
+	}
+
+	private updateElapsedDisplay() {
+		if (!this.overnightStart) {
+			this.trackingElapsedDisplay = '';
+			return;
+		}
+		const ms = Date.now() - this.overnightStart.getTime();
+		const totalMins = Math.floor(ms / 60000);
+		const hours = Math.floor(totalMins / 60);
+		const mins = totalMins % 60;
+		this.trackingElapsedDisplay = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+	}
+
+	private clearElapsedInterval() {
+		if (this.elapsedInterval) {
+			clearInterval(this.elapsedInterval);
+			this.elapsedInterval = null;
+		}
 	}
 
 	stopOvernightSleep() {
 		if (!this.isTrackingOvernight) {
 			return;
 		}
+		this.alertCtrl.create({
+			header: 'End sleep session?',
+			message: 'This will log your overnight sleep.',
+			buttons: [
+				{ text: 'Cancel', role: 'cancel' },
+				{
+					text: 'End session',
+					role: 'confirm',
+					handler: () => this.confirmStopOvernightSleep(),
+				},
+			],
+		}).then(alert => alert.present());
+	}
 
+	private confirmStopOvernightSleep() {
 		if (!this.overnightStart) {
 			console.error('No entry time found');
 			return;
 		}
-
 		const endTime = new Date();
 		const entry = new OvernightSleepData(this.overnightStart, endTime);
 		this.sleepService.logOvernightData(entry);
-
+		this.clearElapsedInterval();
 		this.isTrackingOvernight = false;
 		this.overnightStart = null;
-		
-		setTimeout(() => {
-			this.scrollToBottom(this.allSleepScroll);
-		}, 0);
+		this.trackingElapsedDisplay = '';
+		this.showToast('Overnight sleep logged.');
+		setTimeout(() => this.scrollToBottom(this.allSleepScroll), 0);
 	}
 
 	beginSleepinessLogging() {
@@ -87,15 +136,20 @@ export class HomePage {
 			console.error('Invalid sleepiness value');
 			return;
 		}
-
 		const now = new Date();
 		const entry = new StanfordSleepinessData(value, now);
 		this.sleepService.logSleepinessData(entry);
 		this.isLoggingSleepiness = false;
+		this.showToast('Sleepiness logged.');
+		setTimeout(() => this.scrollToBottom(this.allSleepScroll), 0);
+	}
 
-    setTimeout(() => {
-			this.scrollToBottom(this.allSleepScroll);
-    }, 0);
+	private showToast(message: string) {
+		this.toastCtrl.create({
+			message,
+			duration: 2000,
+			position: 'bottom',
+		}).then(toast => toast.present());
 	}
 
 	onFilterChange(event: CustomEvent) {
