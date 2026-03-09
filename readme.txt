@@ -38,18 +38,18 @@ Nothing too complicated so it promotes usage.
 
 
 7. Did you design your app specifically for iOS or Android, or both?
-I designed the app to work on both iOS and Android, using Ionic’s standard 
+We designed the app to work on both iOS and Android, using Ionic’s standard 
 components so the layout and controls adapt to each platform.
 
 
 8. How can a person log overnight sleep in your app? Why did you choose to support logging overnight sleep in this way?
 Click a simple button when ready to go to sleep, then click the button again once you wake up.
-I chose this so that users didn't need to manually log the time themselves, rather just click a simple button.
+We chose this so that users didn't need to manually log the time themselves, rather just click a simple button.
 
 
 9. How can a person log sleepiness during the day in your app? Why did you choose to support logging sleepiness in this way?
 Similar to how the person logs overnight except an additional button appears to choose a number 1-7
-based on how sleepy they are.
+based on how sleepy they are, as sleepiness can vary by the day.
 
 
 10. How can a person view the data they logged in your app? Why did you choose to support viewing logged data in this way?
@@ -71,4 +71,27 @@ Doesn't disappear unless user clears browser on-device site data.
 
 14. How does your app implement or follow principles of good mobile design?
 Has immediate notifications and responiveness when user interacts with app so they know what they're doing.
-Uses a clear information hierarchy (simple title, short intro, and card-based sections).
+Uses a clear information hierarchy (simple title, short intro, and card-based sections). Provided pop ups to ensure users
+confirmed they wanted to end the current sleep cycle as well (Avoids misclicks).
+
+
+DEMO ANNOTATIONS
+
+0:01 -  Demonstration of sleep tracker, initiated by "Start Overnight Sleep" button
+
+0:20 - Ending the current sleep tracking with the "I'm Awake" Button. Also, shows a pop up 
+to ensure the user confirms they are done with the sleep cycle and didn't misclick. Notification 
+that sleep was logged shows up as well
+
+0:25 - Latest Sleep cycle was stored in both the "All" and "Overnight" tabs
+
+0:37 - Demonstration of sleepiness tracker initiated with "Log Sleepiness Now" button along with 
+the buttons 1 - 7 for how sleepy they are.
+
+0:42 - Notification that Sleepiness was logged. Latest Sleepiness shows in "Sleepiness" tab.
+
+0:47 - Another Sleepiness example.
+
+1:00 - Refresh page to show persistence of data in all three tabs.
+
+
